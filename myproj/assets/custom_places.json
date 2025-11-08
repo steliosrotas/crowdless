@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Syntagma", "icon": "marker-15" },
+      "geometry": { "type": "Point", "coordinates": [23.7345, 37.9756] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Acropolis", "icon": "marker-15" },
+      "geometry": { "type": "Point", "coordinates": [23.7265, 37.9715] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Monastiraki", "icon": "marker-15" },
+      "geometry": { "type": "Point", "coordinates": [23.7270, 37.9760] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Piraeus", "icon": "marker-15" },
+      "geometry": { "type": "Point", "coordinates": [23.643, 37.942] }
+    }
+  ]
+}
