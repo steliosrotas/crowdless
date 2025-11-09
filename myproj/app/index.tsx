@@ -23,15 +23,24 @@ import Icon from "../assets/images/icon4.svg";
 type Point = { id: string; x: number; y: number; label: string; color?: string };
 const MAP_POINTS: Point[] = [
   { id: "Piraeus", x: 1095, y: 1832, label: "Piraeus", color: "#E63946" },
-  { id: "myrtos", x: 0.6, y: 0.25, label: "Myrtos", color: "#F4A261" },
-  { id: "skala", x: 0.85, y: 0.75, label: "Skala", color: "#6BCB77" }
+  { id: "Agios Dimitrios", x: 3503, y: 1873, label: "Agios Dimitrios", color: "#E63946" },
+  { id: "Exarcheia", x: 2555, y: 343, label: "Skala", color: "#E63946" },
+  { id: "Kallithea", x: 2729, y: 1382, label: "Kallithea", color: "#E63946" },
+  { id: "Nea Smyrni", x: 2963, y: 1749, label: "Nea Smyrni", color: "#E63946" },
+  { id: "Pangrati", x: 3833, y: 967, label: "Pangrati", color: "#E63946" },
+  { id: "Syntagma", x: 2587, y: 779, label: "Syntagma", color: "#E63946" },
+  { id: "Zografou", x: 4526, y: 651, label: "Zografou", color: "#E63946" }
 ];
 
 /** === Simple place metadata + alternatives (stub) === */
 const PLACE_DETAILS: Record<string, { name: string; image: string; score: number }> = {
-  Piraeus: { name: "Piraeus", image: "https://picsum.photos/seed/piraeus/800/500", score: 78 },
-  myrtos: { name: "Myrtos Beach", image: "https://picsum.photos/seed/myrtos/800/500", score: 32 },
-  skala: { name: "Skala", image: "https://picsum.photos/seed/skala/800/500", score: 55 }
+  Piraeus: { name: "Piraeus", image: "https://www.gtp.gr/MGfiles/location/image28760[5583].jpg", score: 78 },
+  AgiosDimitrios: { name: "Agios Dimitrios", image: "https://panoramio.gr/wordpress/wp-content/uploads/2020/03/agios-dimitrios-attikis-4.jpg", score: 45 },
+  Kallithea: { name: "Kallithea", image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/f9/7a/e7/caption.jpg?w=600&h=400&s=1", score: 60 },
+  NeaSmyrni: { name: "Nea Smyrni", image: "https://www.athensguide.com/nea-smyrni/nea-smyrni002.jpg", score: 25 },
+  Pangrati: { name: "Pangrati", image: "https://www.gastronomos.gr/wp-content/uploads/2022/06/kalokairino-pagrati-gastronomos.jpg1682-1170x658.jpg?v=1671555820", score: 55 },
+  Syntagma: { name: "Syntagma", image: "https://accessibleroutes.thisisathens.org/wp-content/uploads/2021/10/1.2-plateia-sintagmatos1.jpg", score: 85 },
+  Zografou: { name: "Zografou", image: "https://upload.wikimedia.org/wikipedia/commons/6/67/Attica_06-13_Zografou_01_Papagou.jpg", score: 15 }
 };
 
 const ALTERNATIVES: Record<string, string[]> = {
