@@ -24,7 +24,7 @@ type Point = { id: string; x: number; y: number; label: string; color?: string }
 const MAP_POINTS: Point[] = [
   { id: "Piraeus", x: 1095, y: 1832, label: "Piraeus", color: "#E63946" },
   { id: "Agios Dimitrios", x: 3503, y: 1873, label: "Agios Dimitrios", color: "#E63946" },
-  { id: "Exarcheia", x: 2555, y: 343, label: "Skala", color: "#E63946" },
+  { id: "Exarcheia", x: 2555, y: 343, label: "Exarcheia", color: "#E63946" },
   { id: "Kallithea", x: 2729, y: 1382, label: "Kallithea", color: "#E63946" },
   { id: "Nea Smyrni", x: 2963, y: 1749, label: "Nea Smyrni", color: "#E63946" },
   { id: "Pangrati", x: 3833, y: 967, label: "Pangrati", color: "#E63946" },
@@ -34,19 +34,35 @@ const MAP_POINTS: Point[] = [
 
 /** === Simple place metadata + alternatives (stub) === */
 const PLACE_DETAILS: Record<string, { name: string; image: string; score: number }> = {
-  Piraeus: { name: "Piraeus", image: "https://www.gtp.gr/MGfiles/location/image28760[5583].jpg", score: 78 },
-  AgiosDimitrios: { name: "Agios Dimitrios", image: "https://panoramio.gr/wordpress/wp-content/uploads/2020/03/agios-dimitrios-attikis-4.jpg", score: 45 },
-  Kallithea: { name: "Kallithea", image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/f9/7a/e7/caption.jpg?w=600&h=400&s=1", score: 60 },
-  NeaSmyrni: { name: "Nea Smyrni", image: "https://www.athensguide.com/nea-smyrni/nea-smyrni002.jpg", score: 25 },
-  Pangrati: { name: "Pangrati", image: "https://www.gastronomos.gr/wp-content/uploads/2022/06/kalokairino-pagrati-gastronomos.jpg1682-1170x658.jpg?v=1671555820", score: 55 },
-  Syntagma: { name: "Syntagma", image: "https://accessibleroutes.thisisathens.org/wp-content/uploads/2021/10/1.2-plateia-sintagmatos1.jpg", score: 85 },
-  Zografou: { name: "Zografou", image: "https://upload.wikimedia.org/wikipedia/commons/6/67/Attica_06-13_Zografou_01_Papagou.jpg", score: 15 }
+  Exarcheia: { name: "Exarcheia", image: require("../assets/images/exarcheia.jpg"), score: 50 },
+  Piraeus: { name: "Piraeus", image: require("../assets/images/peireas.jpg"), score: 30 },
+  AgiosDimitrios: { name: "Agios Dimitrios", image: require("../assets/images/agios_dimitrios.jpg"), score: 45 },
+  // Also accept the id with a space (used in MAP_POINTS) so lookups work regardless
+  "Agios Dimitrios": { name: "Agios Dimitrios", image: require("../assets/images/agios_dimitrios.jpg"), score: 45 },
+  Kallithea: { name: "Kallithea", image: require("../assets/images/kallithea.jpg"), score: 60 },
+  NeaSmyrni: { name: "Nea Smyrni", image: require("../assets/images/nea_smyrni.jpg"), score: 25 },
+  // Accept MAP_POINTS id with space as well
+  "Nea Smyrni": { name: "Nea Smyrni", image: require("../assets/images/nea_smyrni.jpg"), score: 25 },
+  Pangrati: { name: "Pangrati", image: require("../assets/images/pangrati.jpg"), score: 20 },
+  Syntagma: { name: "Syntagma", image: require("../assets/images/syntagma.jpg"), score: 85 },
+  Zografou: { name: "Zografou", image: require("../assets/images/zografou.jpg"), score: 15 }
 };
 
+// Also provide entries that exactly match the `MAP_POINTS` ids (which include spaces)
+// so lookups like PLACE_DETAILS[selectedPointId] will work even if keys were stored
+// without spaces.
+PLACE_DETAILS["Agios Dimitrios"] = PLACE_DETAILS.AgiosDimitrios;
+PLACE_DETAILS["Nea Smyrni"] = PLACE_DETAILS.NeaSmyrni;
+
 const ALTERNATIVES: Record<string, string[]> = {
-  Piraeus: ["myrtos", "skala"],
-  myrtos: ["skala", "Piraeus"],
-  skala: ["myrtos", "Piraeus"]
+  Exarcheia: ["Zografou","Nea Smyrni"],
+  Piraeus: ["Kallithea", "Syntagma"],
+  Kallithea: ["Piraeus", "Nea Smyrni", "Zografou"],
+  Syntagma: ["Nea Smyrni", "Kallithea"],
+  "Agios Dimitrios": ["Nea Smyrni", "Pangrati"],
+  "Nea Smyrni": ["Zografou", "Pangrati", "Piraeus",  "Nea Smyrni"],
+  Pangrati: ["Agios Dimitrios", "Nea Smyrni"],
+  Zografou: ["Nea Smyrni"]
 };
 
 /** === Helpers === */
@@ -246,6 +262,10 @@ function SelectedPlaceCard({ id, onLayout }: { id: string; onLayout?: (h: number
   const details = PLACE_DETAILS[id];
   if (!details) return null;
   const lvl = scoreLevel(details.score);
+  const [imgSrc, setImgSrc] = useState<any>(typeof details.image === "string" ? { uri: details.image } : details.image);
+  useEffect(() => {
+    setImgSrc(typeof details.image === "string" ? { uri: details.image } : details.image);
+  }, [details.image]);
   return (
     <View
       key={id}
@@ -264,7 +284,11 @@ function SelectedPlaceCard({ id, onLayout }: { id: string; onLayout?: (h: number
         elevation: 6
       }}
     >
-      <Image source={{ uri: details.image }} style={{ width: "100%", height: 140 }} />
+      <Image
+        source={imgSrc}
+        onError={() => setImgSrc({ uri: "https://via.placeholder.com/600x400?text=No+Image" })}
+        style={{ width: "100%", height: 140 }}
+      />
       <View style={{ padding: 12 }}>
         <Text style={{ fontSize: 18, fontWeight: "800", marginBottom: 6 }}>{details.name}</Text>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -291,6 +315,10 @@ function AlternativeCard({
   const details = PLACE_DETAILS[id];
   if (!details) return null;
   const lvl = scoreLevel(details.score);
+  const [imgSrc, setImgSrc] = useState<any>(typeof details.image === "string" ? { uri: details.image } : details.image);
+  useEffect(() => {
+    setImgSrc(typeof details.image === "string" ? { uri: details.image } : details.image);
+  }, [details.image]);
   return (
     <View
       key={id}
@@ -310,7 +338,11 @@ function AlternativeCard({
       }}
     >
       <View>
-        <Image source={{ uri: details.image }} style={{ width: "100%", height: 140 }} />
+        <Image
+          source={imgSrc}
+          onError={() => setImgSrc({ uri: "https://via.placeholder.com/600x400?text=No+Image" })}
+          style={{ width: "100%", height: 140 }}
+        />
         <View
           style={{
             position: "absolute",
@@ -472,7 +504,16 @@ export default function HomeScreen() {
             }}
           >
             <Ionicons name="search" size={18} color="#999" style={{ marginRight: 6 }} />
-            <TextInput placeholder="Destination" placeholderTextColor="#999" style={{ flex: 1, fontSize: 16 }} />
+            <TextInput
+              placeholder="Destination"
+              placeholderTextColor="#999"
+              // Keep it single-line and vertically centered on Android so the text
+              // doesn't shift/scroll inside the small bar.
+              multiline={false}
+              textAlignVertical={Platform.OS === "android" ? "center" : undefined}
+              style={{ flex: 1, fontSize: 16, paddingVertical: 0 }}
+              underlineColorAndroid="transparent"
+            />
           </View>
 
           <View style={{ flexDirection: "row", alignItems: "center" }}>
