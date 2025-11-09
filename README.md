@@ -45,6 +45,15 @@ Capabilities:
 - Saves a simple, tunable scoring model `areas_output/crowdness_model.json`
 - Single and batch predictions via nearest-timestamp lookup
 
+### Data Collector Notebook
+**File:** `Crowdless_Crowdness_Demo_with_collector.ipynb`
+
+Adds a cell that writes `collect_s2_catalog.py` (Copernicus Data Space, Sentinel-2 L2A), collects scene metadata for predefined areas/date ranges, normalizes items, and saves JSON under `areas_output/` (per-area or per-day). When real processing is off, it emits deterministic fake indices for testing.
+
+Example:
+```bash
+python collect_s2_catalog.py --areas Syntagma,Kallithea --start 2025-01-01T00:00:00Z --end 2025-01-07T23:59:59Z --cloud-max 30 --out areas_output
+
 ```
 Place JSON data under `areas_output/`, open the notebook(s), and run cells top-to-bottom. Edit `FIELD_MAP` in the generic notebook to match your numeric fields.
 
