@@ -120,44 +120,59 @@ const MapImage = React.forwardRef<MapImageHandle, MapImageProps>(({ selectedId, 
   const circleSize = 22;
   const labelOffset = 26;
 
+  // Helper to center a point in the viewport. Extracted so both the
+  // imperative focusPoint and an internal effect can call it once sizes
+  // (nativeSize, viewport) are available.
+  const centerOnPoint = (p: Point) => {
+    let px: number;
+    let py: number;
+    if (p.x <= 1 && p.y <= 1) {
+      px = Math.round(p.x * displayW);
+      py = Math.round(p.y * displayH);
+    } else if (nativeSize) {
+      const scaleX = displayW / nativeSize.width;
+      const scaleY = displayH / nativeSize.height;
+      px = Math.round(p.x * scaleX);
+      py = Math.round(p.y * scaleY);
+    } else {
+      px = 0;
+      py = 0;
+    }
+
+    const vw = viewportWidth || 0;
+    const vh = viewportHeight || 0;
+
+    const maxScrollX = Math.max(0, displayW - vw);
+    const maxScrollY = Math.max(0, displayH - vh);
+
+    const targetX = Math.max(0, Math.min(maxScrollX, px - Math.round(vw / 2)));
+    const targetY = Math.max(0, Math.min(maxScrollY, py - Math.round(vh / 2)));
+
+    try {
+      outerRef.current?.scrollTo({ x: targetX, animated: true });
+    } catch {}
+    try {
+      innerRef.current?.scrollTo({ y: targetY, animated: true });
+    } catch {}
+  };
+
   React.useImperativeHandle(
     ref,
     () => ({
-      focusPoint: (p: Point) => {
-        let px: number;
-        let py: number;
-        if (p.x <= 1 && p.y <= 1) {
-          px = Math.round(p.x * displayW);
-          py = Math.round(p.y * displayH);
-        } else if (nativeSize) {
-          const scaleX = displayW / nativeSize.width;
-          const scaleY = displayH / nativeSize.height;
-          px = Math.round(p.x * scaleX);
-          py = Math.round(p.y * scaleY);
-        } else {
-          px = 0;
-          py = 0;
-        }
-
-        const vw = viewportWidth || 0;
-        const vh = viewportHeight || 0;
-
-        const maxScrollX = Math.max(0, displayW - vw);
-        const maxScrollY = Math.max(0, displayH - vh);
-
-        const targetX = Math.max(0, Math.min(maxScrollX, px - Math.round(vw / 2)));
-        const targetY = Math.max(0, Math.min(maxScrollY, py - Math.round(vh / 2)));
-
-        try {
-          outerRef.current?.scrollTo({ x: targetX, animated: true });
-        } catch {}
-        try {
-          innerRef.current?.scrollTo({ y: targetY, animated: true });
-        } catch {}
-      }
+      focusPoint: (p: Point) => centerOnPoint(p)
     }),
     [displayW, displayH, nativeSize, viewportWidth, viewportHeight]
   );
+
+  // When selectedId changes, center that point once sizes are available.
+  React.useEffect(() => {
+    if (!selectedId) return;
+    const p = MAP_POINTS.find((m) => m.id === selectedId);
+    if (!p) return;
+    // If nativeSize/viewport are not ready yet, centerOnPoint will still
+    // clamp and attempt scroll; try again when those values change.
+    centerOnPoint(p);
+  }, [selectedId, displayW, displayH, nativeSize, viewportWidth, viewportHeight]);
 
   if (imgSize.width === 0 || imgSize.height === 0 || !nativeSize) {
     return (
