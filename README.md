@@ -46,8 +46,9 @@ Capabilities:
 - Single and batch predictions via nearest-timestamp lookup
 
 ```
-
 Place JSON data under `areas_output/`, open the notebook(s), and run cells top-to-bottom. Edit `FIELD_MAP` in the generic notebook to match your numeric fields.
+
+```
 
 ---
 
