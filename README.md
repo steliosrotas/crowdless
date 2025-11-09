@@ -46,7 +46,7 @@ Capabilities:
 - Single and batch predictions via nearest-timestamp lookup
 
 ### Data Collector Notebook
-**File:** `Crowdless_Crowdness_Demo_with_collector.ipynb`
+**File:** `Crowdness_API_analysis_Demo.ipynb`
 
 Adds a cell that writes `collect_s2_catalog.py` (Copernicus Data Space, Sentinel-2 L2A), collects scene metadata for predefined areas/date ranges, normalizes items, and saves JSON under `areas_output/` (per-area or per-day). When real processing is off, it emits deterministic fake indices for testing.
 
