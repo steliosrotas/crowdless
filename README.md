@@ -63,7 +63,3 @@ Interpretable, rule-based score:
 Tune `crowdness_model.json` parameters to fit your use case.
 
 ---
-
-## License
-
-MIT
