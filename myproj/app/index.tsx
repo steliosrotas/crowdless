@@ -435,8 +435,8 @@ export default function HomeScreen() {
   const [selectedTime, setSelectedTime] = useState<Date>(new Date());
   const [calendarVisible, setCalendarVisible] = useState<boolean>(false);
 
-  // Default selection = first point
-  const defaultId = MAP_POINTS[0]?.id ?? null;
+  // Default selection: prefer Syntagma on app start so the map opens focused there
+  const defaultId = MAP_POINTS.find((p) => p.id === "Syntagma")?.id ?? MAP_POINTS[0]?.id ?? null;
   const [selectedPointId, setSelectedPointId] = useState<string | null>(defaultId);
 
   // Map focus on mount and on selection
