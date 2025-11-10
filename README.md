@@ -57,7 +57,6 @@ python collect_s2_catalog.py --areas Syntagma,Kallithea --start 2025-01-01T00:00
 ```
 Place JSON data under `areas_output/`, open the notebook(s), and run cells top-to-bottom. Edit `FIELD_MAP` in the generic notebook to match your numeric fields.
 
-```
 
 ---
 
